@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e5b5d">
+<title>ميزانيتي اليومية</title>
+<style>
+:root{--teal:#0e5b5d;--bg:#f7f3e9;--card:#fffdf8;--ink:#1d2939;--muted:#697386;--line:#e8dfc7;--danger:#c64b3f;--nav:#1f2b3a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif}
+button,input{font:inherit}.app{max-width:820px;margin:auto;min-height:100vh;padding-bottom:250px}
+.top{background:var(--teal);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 24px 26px;border-radius:0 0 38px 38px}
+.toprow{display:flex;justify-content:space-between;align-items:center}.icon{width:46px;height:46px;border:0;border-radius:14px;background:#ffffff20;color:#fff;font-size:22px}
+.hero-label{opacity:.8;margin-top:18px;font-size:18px}.hero-value{font-size:45px;font-weight:800;margin:5px 0 18px}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:13px;border-top:1px solid #ffffff25;padding-top:15px}.grid4 b{display:block;margin-top:5px}
+.content{padding:25px 28px}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.card,.cat,.history,.summary{background:var(--card);border:1px solid var(--line);border-radius:27px;padding:23px}
+.card span,.cat p{color:var(--muted)}.card b{display:block;font-size:34px;margin-top:8px}
+.cat{margin-bottom:20px;cursor:pointer;transition:transform .15s ease}.cat:active{transform:scale(.99)}.cathead{display:flex;justify-content:space-between}.cat h3{font-size:25px;margin:0}.cat p{font-size:18px;margin:4px 0}.bar{height:17px;background:#e8e3cf;border-radius:20px;overflow:hidden;margin-top:20px}.bar i{display:block;height:100%;background:var(--teal)}
+h2{font-size:22px;color:#8a6426}.history{padding:0;overflow:hidden}.hist{display:flex;justify-content:space-between;align-items:center;padding:17px 19px;border-bottom:1px solid #eee7d7}.hist:last-child{border:0}.hist small{display:block;color:var(--muted);margin-top:5px}.actions{display:flex;gap:7px;align-items:center}.trash,.edit{border:0;background:transparent;font-size:19px}.trash{color:var(--danger)}.edit{color:var(--teal)}.empty{padding:22px;text-align:center;color:var(--muted)}
+.expense{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(820px,100%);background:var(--nav);padding:18px 28px calc(18px + env(safe-area-inset-bottom));border-radius:34px 34px 0 0;z-index:10}
+.chips{display:flex;gap:10px;overflow-x:auto;padding-bottom:3px}.chip{flex:0 0 auto;min-width:95px;border:0;padding:15px 14px;border-radius:17px;background:#334155;color:#d1d5db}.chip.active{background:var(--danger);color:#fff}
+.inputs{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-top:14px}input{width:100%;border:1px solid var(--line);background:#fff;padding:16px;border-radius:17px}
+.primary{width:100%;border:0;background:var(--teal);color:#fff;padding:18px;border-radius:20px;font-weight:800;font-size:18px;margin-top:14px}
+.modal{display:none;position:fixed;inset:0;background:#0007;z-index:30;align-items:flex-end;justify-content:center}.modal.show{display:flex}
+.sheet{width:min(820px,100%);max-height:93vh;overflow:auto;background:var(--bg);border-radius:34px 34px 0 0;padding:24px 28px calc(30px + env(safe-area-inset-bottom))}
+.sheethead{display:flex;justify-content:space-between;align-items:center}.sheethead h1{margin:0}.close{border:0;background:transparent;color:#0788ff;font-size:34px}
+label{display:block;margin:18px 4px 8px}.row2{display:grid;grid-template-columns:1fr 1fr;gap:13px}.sect{display:flex;justify-content:space-between;align-items:center;margin-top:25px;gap:12px}.addsmall{border:0;background:var(--teal);color:#fff;padding:11px 14px;border-radius:13px;white-space:nowrap}
+.commit,.catsetting{display:grid;grid-template-columns:1fr 120px 45px;gap:9px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:19px;padding:12px;margin-top:11px}.commit input,.catsetting input{padding:11px}.remove{border:0;background:#fff1ef;color:var(--danger);height:43px;border-radius:12px;font-size:20px}
+.summary{margin-top:18px}.reportgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.reportcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px}.reportcard span{color:var(--muted);font-size:14px}.reportcard b{display:block;font-size:24px;margin-top:7px}.reportlist{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden}.reportrow{display:flex;justify-content:space-between;gap:14px;padding:15px 17px;border-bottom:1px solid #eee7d7}.reportrow:last-child{border-bottom:0}.reportbar{height:10px;background:#e8e3cf;border-radius:12px;overflow:hidden;margin-top:8px}.reportbar i{display:block;height:100%;background:var(--teal)}.monthnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}.monthnav button{border:0;background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 14px}.monthlybtn{margin-top:18px;background:#fff;color:var(--teal);border:1px solid #ffffff50}.toolrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.secondary{width:100%;border:1px solid var(--line);background:#fff;color:var(--teal);padding:16px;border-radius:18px;font-weight:800}.datepick{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin:14px 0}.datepick input{background:#fff}.textarea{width:100%;min-height:280px;resize:vertical;border:1px solid var(--line);background:#fff;padding:16px;border-radius:17px;font:inherit;line-height:1.8;direction:rtl}.checks{display:flex;align-items:center;gap:8px;margin:14px 0;color:var(--muted)}.checks input{width:auto}.dataActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dataActions button{margin-top:0}.sum{display:flex;justify-content:space-between;padding:10px 0}.sum+.sum{border-top:1px solid #eee}.sum strong{font-size:23px}.green{color:#16865e}.note{color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px}
+@media(max-width:560px){.content{padding:20px 16px}.top{padding-left:18px;padding-right:18px}.two{gap:11px}.card{padding:19px 15px}.card b{font-size:29px}.expense,.sheet{padding-left:16px;padding-right:16px}.inputs{grid-template-columns:1fr 1.4fr}.row2{grid-template-columns:1fr}.commit,.catsetting{grid-template-columns:1fr 92px 43px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="toprow"><button class="icon" id="settingsBtn">⚙️</button><div id="today"></div><button class="icon" id="reportBtn">📊</button></div>
+<div class="hero-label">الصافي المتبقي بعد الالتزامات</div>
+<div class="hero-value"><span id="remaining">٠</span> <small style="font-size:21px">ريال</small></div>
+<div class="grid4">
+<div>ميزانية اليوم<b><span id="daily">٠</span> ريال</b></div>
+<div>صرفت اليوم<b><span id="todaySpent">٠</span> ريال</b></div>
+<div>الباقي اليوم<b><span id="todayLeft">٠</span> ريال</b></div>
+<div>التحديث القادم<b>12 ليلًا</b></div>
+</div>
+</header>
+<main class="content">
+<div class="two">
+<div class="card"><span>الاحتياطي</span><b><span id="reserve">٠</span> ريال</b></div>
+<div class="card"><span>حتى الراتب</span><b><span id="days">٠</span> يوم</b></div>
+</div>
+<div id="categories"></div>
+<h2>آخر المصروفات</h2><div class="history" id="history"></div><div class="toolrow"><button class="secondary" id="dailyReportBtn">التقارير اليومية</button><button class="secondary" id="dataBtn">بياناتي للمشاركة</button></div>
+</main>
+</div>
+
+<section class="expense" id="expensePanel">
+<div class="chips" id="expenseChips"></div>
+<div class="inputs"><input id="amount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="المبلغ"><input id="note" placeholder="ملاحظة (اختياري)"></div>
+<button class="primary" id="addExpense">+ إضافة مصروف</button><button class="primary monthlybtn" id="manageExpensesBtn">عرض وتعديل المصروفات</button>
+</section>
+
+
+
+
+
+<div class="modal" id="dailyModal"><div class="sheet">
+<div class="sheethead"><h1>التقرير اليومي</h1><button class="close" id="closeDaily">×</button></div>
+<div class="datepick"><div><label style="margin-top:0">اختر التاريخ</label><input id="dailyDate" type="date"></div><button class="addsmall" id="todayReportBtn">اليوم</button></div>
+<div id="dailyContent"></div>
+</div></div>
+
+<div class="modal" id="dataModal"><div class="sheet">
+<div class="sheethead"><h1>بياناتي للمشاركة</h1><button class="close" id="closeData">×</button></div>
+<div class="note">البيانات لا تُرسل تلقائيًا. أنت تختار النسخ أو تنزيل الملف ثم تشاركه بنفسك.</div>
+<label>من تاريخ</label><input id="dataFrom" type="date">
+<label>إلى تاريخ</label><input id="dataTo" type="date">
+<label class="checks"><input id="hideNotes" type="checkbox" checked> إخفاء ملاحظات المصروفات حفاظًا على الخصوصية</label>
+<button class="primary" id="buildData">تحديث الملخص</button>
+<label>الملخص الجاهز للمشاركة</label><textarea class="textarea" id="dataText" readonly></textarea>
+<div class="dataActions"><button class="primary" id="copyData">نسخ الملخص</button><button class="primary" id="downloadData" style="background:#8a6426">تنزيل ملف JSON</button></div>
+</div></div>
+
+<div class="modal" id="manageModal"><div class="sheet">
+<div class="sheethead"><h1>إدارة المصروفات</h1><button class="close" id="closeManage">×</button></div>
+<div class="row2">
+  <div><label>من تاريخ</label><input id="manageFrom" type="date"></div>
+  <div><label>إلى تاريخ</label><input id="manageTo" type="date"></div>
+</div>
+<button class="primary" id="applyManageFilter">عرض الفترة</button>
+<div id="manageSummary" class="summary"></div>
+<div id="manageList" class="reportlist"></div>
+</div></div>
+
+<div class="modal" id="editModal"><div class="sheet">
+<div class="sheethead"><h1>تعديل المصروف</h1><button class="close" id="closeEdit">×</button></div>
+<label>التصنيف</label>
+<div class="chips" id="editCategoryChips" style="overflow-x:auto"></div>
+<label>المبلغ</label><input id="editAmount" type="number" min="0" step="0.01" inputmode="decimal">
+<label>الملاحظة</label><input id="editNote" placeholder="ملاحظة (اختياري)">
+<button class="primary" id="saveEdit">حفظ التعديل</button>
+</div></div>
+
+<div class="modal" id="detailsModal"><div class="sheet">
+<div class="sheethead"><h1 id="detailsTitle">التفاصيل</h1><button class="close" id="closeDetails">×</button></div>
+<div id="detailsContent"></div>
+</div></div>
+
+<div class="modal" id="reportModal"><div class="sheet">
+<div class="sheethead"><h1>تقرير الدورة المالية</h1><button class="close" id="closeReport">×</button></div>
+<div class="monthnav">
+      <button id="nextCycle">‹</button>
+      <strong id="reportCycleTitle"></strong>
+      <button id="prevCycle">›</button>
+    </div>
+<div id="reportContent"></div>
+</div></div>
+
+<div class="modal" id="modal"><div class="sheet">
+<div class="sheethead"><h1>إعداد الميزانية</h1><button class="close" id="close">×</button></div>
+<label>الراتب أو المبلغ قبل الالتزامات</label><input id="salary" type="number" min="0">
+<label>يوم نزول الراتب</label><input id="salaryDay" type="number" min="1" max="31">
+<button class="primary" id="salaryReceivedBtn" style="background:#8a6426">استلام الراتب وبدء دورة جديدة</button>
+<div class="note">اضغط الزر عند نزول الراتب فعليًا، حتى لو تقدم أو تأخر. تبدأ دورة جديدة وتبقى المصروفات القديمة محفوظة في التقرير الشهري.</div>
+
+<div class="sect"><h3>الالتزامات الشهرية</h3><button class="addsmall" id="addCommitment">+ إضافة التزام</button></div>
+<div id="commitments"></div>
+<div class="summary">
+<div class="sum"><span>مجموع الالتزامات</span><strong><span id="commitTotal">٠</span> ريال</strong></div>
+<div class="sum"><span>الصافي بعد الالتزامات</span><strong class="green"><span id="netAfter">٠</span> ريال</strong></div>
+</div>
+
+<div class="sect"><h3>تصنيفات المصروفات</h3><button class="addsmall" id="addCategory">+ إضافة تصنيف</button></div>
+<div class="note">يمكن إضافة عطور، سينما، مكافأة أو أي تصنيف آخر، وتحديد ميزانية مستقلة له.</div>
+<div id="categorySettings"></div>
+
+<div class="summary">
+<div class="sum"><span>بداية الدورة الحالية</span><strong id="cycleStartText"></strong></div>
+<div class="sum"><span>الاحتياطي المحسوب تلقائيًا</span><strong><span id="reservePreview">٠</span> ريال</strong></div><div class="note">تفاصيل الالتزامات لا تظهر في الرئيسية، والتصنيفات المضافة تظهر تلقائيًا في بطاقات المصروفات وأزرار الإضافة.</div></div>
+<button class="primary" id="saveSettings">حفظ وإغلاق</button>
+</div></div>
+
+<script>
+// version: manage-expenses-date-filter-2026-08-26
+const KEY='budget_app_v5';
+const defaults={
+ salary:0,
+ salaryDay:25,
+ cycleStart:new Date().toISOString(),
+ commitments:[],
+ categories:[
+  {id:'food',name:'أكل',budget:0},
+  {id:'gas',name:'بنزين',budget:0},
+  {id:'other',name:'أخرى',budget:0}
+ ],
+ expenses:[],
+ cycles:[]
+};
+let state=load(),selected='food';
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function load(){
+ try{
+  const x=JSON.parse(localStorage.getItem(KEY));
+  if(x) return {...clone(defaults),...x,cycleStart:x.cycleStart||new Date().toISOString(),commitments:x.commitments||[],categories:x.categories||clone(defaults.categories),expenses:x.expenses||[],cycles:x.cycles||[]};
+  const old=JSON.parse(localStorage.getItem('budget_app_v4'));
+  if(old){
+   const cats=[
+    {id:'food',name:'أكل',budget:Number(old.budgets?.food)||0},
+    {id:'gas',name:'بنزين',budget:Number(old.budgets?.gas)||0},
+    {id:'other',name:'أخرى',budget:Number(old.budgets?.other)||0}
+   ];
+   const migrated={salary:old.salary||0,salaryDay:old.salaryDay||25,cycleStart:new Date().toISOString(),commitments:old.commitments||[],categories:cats,expenses:old.expenses||[],cycles:[]};
+   localStorage.setItem(KEY,JSON.stringify(migrated)); return migrated;
+  }
+ }catch(e){}
+ return clone(defaults)
+}
+function normalizeExpenses(){
+ state.expenses=(state.expenses||[]).map((x,i)=>({
+  ...x,
+  id:x.id!=null?String(x.id):'old_'+i+'_'+Date.now(),
+  date:x.date||new Date().toISOString(),
+  note:x.note||''
+ }));
+}
+normalizeExpenses();
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function n(x){return Number(x)||0}
+function m(x){return n(x).toLocaleString('ar-SA',{maximumFractionDigits:2})}
+function cTotal(){return state.commitments.reduce((s,x)=>s+n(x.amount),0)}
+function net(){return Math.max(0,n(state.salary)-cTotal())}
+function currentCycleExpenses(){
+ const start=new Date(state.cycleStart||0).getTime();
+ return state.expenses.filter(x=>new Date(x.date).getTime()>=start)
+}
+function spent(cat){return currentCycleExpenses().filter(x=>!cat||x.cat===cat).reduce((s,x)=>s+n(x.amount),0)}
+function budgetsTotal(){return state.categories.reduce((s,x)=>s+n(x.budget),0)}
+function res(){return Math.max(0,net()-budgetsTotal())}
+function daysLeft(){const now=new Date(),d=Math.max(1,Math.min(31,n(state.salaryDay)||25));let t=new Date(now.getFullYear(),now.getMonth(),d);if(t<=now)t=new Date(now.getFullYear(),now.getMonth()+1,d);return Math.max(1,Math.ceil((t-now)/86400000))}
+function spentToday(){const t=localDateKey();return currentCycleExpenses().filter(x=>(x.dayKey||localDateKey(new Date(x.date)))===t).reduce((s,x)=>s+n(x.amount),0)}
+function catName(id){return state.categories.find(x=>x.id===id)?.name||'تصنيف محذوف'}
+
+function render(){
+ if(!state.categories.some(x=>x.id===selected)) selected=state.categories[0]?.id||'';
+ const rem=Math.max(0,net()-spent()),d=daysLeft(),db=rem/d,st=spentToday();
+ today.textContent=new Date().toLocaleDateString('ar-SA-u-ca-gregory',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ remaining.textContent=m(rem);daily.textContent=m(db);todaySpent.textContent=m(st);todayLeft.textContent=m(Math.max(0,db-st));reserve.textContent=m(res());days.textContent=d.toLocaleString('ar-SA-u-ca-gregory');
+
+ categories.innerHTML=state.categories.length?state.categories.map(cat=>{
+  const b=n(cat.budget),u=spent(cat.id),left=Math.max(0,b-u),p=b?Math.min(100,u/b*100):0;
+  return `<div class="cat" onclick="openCategory('${cat.id}')"><div class="cathead"><div><h3>${escapeHtml(cat.name)}</h3><p>المتبقي ${m(left)} ريال</p></div><div>${m(u)} / ${m(b)}</div></div><div class="bar"><i style="width:${p}%"></i></div></div>`
+ }).join(''):'<div class="empty">أضف تصنيفًا من الإعدادات</div>';
+
+ expenseChips.innerHTML=state.categories.map((cat,i)=>`<button class="chip ${cat.id===selected?'active':''}" data-cat="${cat.id}">${escapeHtml(cat.name)}</button>`).join('');
+ document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{selected=b.dataset.cat;render()});
+
+ const h=[...currentCycleExpenses()].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+ history.innerHTML=h.length?h.map(x=>`<div class="hist"><div><b>${m(x.amount)} ريال · ${escapeHtml(catName(x.cat))}</b><small>${escapeHtml(x.note||'بدون ملاحظة')} · ${new Date(x.date).toLocaleString('ar-SA-u-ca-gregory')}</small></div><div class="actions"><button class="edit" onclick="openEditExpense('${x.id}')">✏️</button><button class="trash" onclick="removeExpense('${x.id}')">🗑️</button></div></div>`).join(''):'<div class="empty">لا توجد مصروفات حتى الآن</div>';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function removeExpense(id){if(!confirm('هل تريد حذف هذا المصروف؟'))return;state.expenses=state.expenses.filter(x=>String(x.id)!==String(id));save();render()}window.removeExpense=removeExpense;
+
+addExpense.onclick=()=>{
+ if(!selected){alert('أضف تصنيفًا أولًا من الإعدادات');return}
+ const a=n(amount.value);if(a<=0){alert('اكتب مبلغًا صحيحًا');return}
+ state.expenses.push({id:String(Date.now())+Math.random(),cat:selected,amount:a,note:note.value.trim(),date:new Date().toISOString(),dayKey:localDateKey()});
+ save();amount.value='';note.value='';render()
+};
+
+
+const detailsModal=document.getElementById('detailsModal');
+
+const reportModal=document.getElementById('reportModal');
+let reportCyclePosition=0; // 0=current, 1=last closed, 2=older...
+
+function localStartOfDay(value){
+ const d=new Date(value);
+ return new Date(d.getFullYear(),d.getMonth(),d.getDate());
+}
+function inclusiveDays(from,to){
+ const a=localStartOfDay(from),b=localStartOfDay(to);
+ return Math.max(1,Math.floor((b-a)/86400000)+1);
+}
+function currentCycleSnapshot(){
+ const start=new Date(state.cycleStart||new Date());
+ const end=new Date();
+ const items=currentCycleExpenses();
+ return {
+  id:'current',
+  closed:false,
+  start:start.toISOString(),
+  end:end.toISOString(),
+  salary:n(state.salary),
+  commitmentsTotal:cTotal(),
+  netAfterCommitments:net(),
+  categories:state.categories.map(x=>({id:x.id,name:x.name,budget:n(x.budget)})),
+  expenses:items.map(x=>({...x}))
+ };
+}
+function availableCycles(){
+ return [currentCycleSnapshot(),...(state.cycles||[]).slice().reverse()];
+}
+function cycleCategoryName(cycle,id){
+ return cycle.categories?.find(x=>x.id===id)?.name||catName(id);
+}
+function renderCycleReport(){
+ const cycles=availableCycles();
+ reportCyclePosition=Math.max(0,Math.min(reportCyclePosition,cycles.length-1));
+ const cycle=cycles[reportCyclePosition];
+ const startDate=new Date(cycle.start);
+ const endDate=cycle.closed?new Date(cycle.end):new Date();
+ const items=cycle.expenses||[];
+ const total=items.reduce((s,x)=>s+n(x.amount),0);
+ const elapsedDays=inclusiveDays(startDate,endDate);
+ const avg=total/elapsedDays;
+ const operationAvg=items.length?total/items.length:0;
+ const remaining=Math.max(0,n(cycle.netAfterCommitments)-total);
+ const grouped=(cycle.categories||[]).map(cat=>({
+   name:cat.name,
+   amount:items.filter(x=>x.cat===cat.id).reduce((s,x)=>s+n(x.amount),0)
+ })).filter(x=>x.amount>0).sort((a,b)=>b.amount-a.amount);
+ const top=grouped[0];
+ const periodText=`${startDate.toLocaleDateString('ar-SA-u-ca-gregory')} إلى ${endDate.toLocaleDateString('ar-SA-u-ca-gregory')}`;
+ reportCycleTitle.textContent=cycle.closed?`دورة مغلقة · ${periodText}`:`الدورة الحالية · منذ ${startDate.toLocaleDateString('ar-SA-u-ca-gregory')}`;
+
+ reportContent.innerHTML=`
+  <div class="reportgrid">
+   <div class="reportcard"><span>إجمالي المصروفات</span><b>${m(total)} ريال</b></div>
+   <div class="reportcard"><span>متوسط الصرف اليومي</span><b>${m(avg)} ريال</b><small>${elapsedDays.toLocaleString('ar-SA')} يوم</small></div>
+   <div class="reportcard"><span>المتبقي</span><b>${m(remaining)} ريال</b></div>
+   <div class="reportcard"><span>متوسط العملية</span><b>${m(operationAvg)} ريال</b></div>
+   <div class="reportcard"><span>عدد العمليات</span><b>${items.length.toLocaleString('ar-SA')}</b></div>
+   <div class="reportcard"><span>الأكثر صرفًا</span><b>${top?escapeHtml(top.name):'—'}</b></div>
+  </div>
+  <div class="summary" style="margin-top:16px">
+   <div class="sum"><span>بداية الدورة</span><strong>${startDate.toLocaleDateString('ar-SA-u-ca-gregory')}</strong></div>
+   <div class="sum"><span>${cycle.closed?'نهاية الدورة':'حتى تاريخ التقرير'}</span><strong>${endDate.toLocaleDateString('ar-SA-u-ca-gregory')}</strong></div>
+   <div class="sum"><span>الأيام المحتسبة في المتوسط</span><strong>${elapsedDays.toLocaleString('ar-SA')}</strong></div>
+  </div>
+  <h2 style="margin-top:22px">الصرف حسب التصنيف</h2>
+  <div class="reportlist">${grouped.length?grouped.map(x=>{
+   const p=total?Math.round(x.amount/total*100):0;
+   return `<div class="reportrow"><div style="flex:1"><div style="display:flex;justify-content:space-between"><b>${escapeHtml(x.name)}</b><span>${m(x.amount)} ريال · ${p.toLocaleString('ar-SA')}٪</span></div><div class="reportbar"><i style="width:${p}%"></i></div></div></div>`
+  }).join(''):'<div class="empty">لا توجد مصروفات في هذه الدورة</div>'}</div>
+  <h2 style="margin-top:22px">آخر عمليات الدورة</h2>
+  <div class="reportlist">${items.length?[...items].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20).map(x=>`
+   <div class="reportrow"><div><b>${m(x.amount)} ريال · ${escapeHtml(cycleCategoryName(cycle,x.cat))}</b>
+   <small style="display:block;color:var(--muted);margin-top:4px">${escapeHtml(x.note||'بدون ملاحظة')}</small></div>
+   <div style="color:var(--muted);font-size:14px">${new Date(x.date).toLocaleDateString('ar-SA-u-ca-gregory',{day:'numeric',month:'short'})}</div></div>`
+  ).join(''):'<div class="empty">لا توجد عمليات</div>'}</div>`;
+}
+reportBtn.onclick=()=>{reportCyclePosition=0;renderCycleReport();reportModal.classList.add('show')};
+closeReport.onclick=()=>reportModal.classList.remove('show');
+prevCycle.onclick=()=>{const max=availableCycles().length-1;if(reportCyclePosition<max){reportCyclePosition++;renderCycleReport()}};
+nextCycle.onclick=()=>{if(reportCyclePosition>0){reportCyclePosition--;renderCycleReport()}};
+
+const manageModal=document.getElementById('manageModal');
+
+function manageRangeItems(){
+ const from=manageFrom.value||localDateKey(new Date(state.cycleStart||new Date()));
+ const to=manageTo.value||localDateKey();
+ return [...state.expenses].filter(x=>{
+  const key=x.dayKey||localDateKey(new Date(x.date));
+  return key>=from&&key<=to;
+ }).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+}
+function renderManageExpenses(){
+ const items=manageRangeItems();
+ const total=items.reduce((s,x)=>s+n(x.amount),0);
+ manageSummary.innerHTML=`<div class="sum"><span>عدد المصروفات</span><strong>${items.length.toLocaleString('ar-SA')}</strong></div>
+ <div class="sum"><span>إجمالي المصروفات</span><strong>${m(total)} ريال</strong></div>
+ <div class="sum"><span>الفترة</span><strong style="font-size:16px">${manageFrom.value||'—'} إلى ${manageTo.value||'—'}</strong></div>`;
+ manageList.innerHTML=items.length?items.map(x=>`
+  <div class="reportrow">
+   <div style="flex:1">
+    <b>${m(x.amount)} ريال · ${escapeHtml(catName(x.cat))}</b>
+    <small style="display:block;color:var(--muted);margin-top:5px">${escapeHtml(x.note||'بدون ملاحظة')} · ${x.date?new Date(x.date).toLocaleString('ar-SA-u-ca-gregory'):'بدون تاريخ'}</small>
+   </div>
+   <div class="actions">
+    <button class="edit" onclick="openEditFromManage('${x.id}')">✏️</button>
+    <button class="trash" onclick="deleteFromManage('${x.id}')">🗑️</button>
+   </div>
+  </div>`).join(''):'<div class="empty">لا توجد مصروفات في هذه الفترة</div>';
+}
+manageExpensesBtn.onclick=()=>{
+ manageFrom.value=localDateKey(new Date(state.cycleStart||new Date()));
+ manageTo.value=localDateKey();
+ renderManageExpenses();
+ manageModal.classList.add('show')
+};
+applyManageFilter.onclick=renderManageExpenses;
+manageFrom.onchange=renderManageExpenses;
+manageTo.onchange=renderManageExpenses;
+closeManage.onclick=()=>manageModal.classList.remove('show');
+function openEditFromManage(id){manageModal.classList.remove('show');openEditExpense(id)}
+window.openEditFromManage=openEditFromManage;
+function deleteFromManage(id){
+ if(!confirm('هل تريد حذف هذا المصروف؟'))return;
+ state.expenses=state.expenses.filter(x=>String(x.id)!==String(id));
+ (state.cycles||[]).forEach(c=>{
+  c.expenses=(c.expenses||[]).filter(x=>String(x.id)!==String(id));
+ });
+ save();render();renderManageExpenses();
+}
+window.deleteFromManage=deleteFromManage;
+
+const editModal=document.getElementById('editModal');
+let editingExpenseId=null;
+let editSelectedCategory='';
+
+function openEditExpense(id){
+ const item=state.expenses.find(x=>String(x.id)===String(id)); if(!item)return;
+ editingExpenseId=id;
+ editSelectedCategory=item.cat;
+ editAmount.value=item.amount;
+ editNote.value=item.note||'';
+ renderEditCategoryChips();
+ editModal.classList.add('show');
+}
+window.openEditExpense=openEditExpense;
+
+function renderEditCategoryChips(){
+ editCategoryChips.innerHTML=state.categories.map(cat=>`<button type="button" class="chip ${cat.id===editSelectedCategory?'active':''}" data-edit-cat="${cat.id}">${escapeHtml(cat.name)}</button>`).join('');
+ editCategoryChips.querySelectorAll('[data-edit-cat]').forEach(btn=>btn.onclick=()=>{
+  editSelectedCategory=btn.dataset.editCat;
+  renderEditCategoryChips();
+ });
+}
+closeEdit.onclick=()=>editModal.classList.remove('show');
+saveEdit.onclick=()=>{
+ const item=state.expenses.find(x=>String(x.id)===String(editingExpenseId));
+ const value=n(editAmount.value);
+ if(!item)return;
+ if(value<=0){alert('اكتب مبلغًا صحيحًا');return}
+ item.amount=value;
+ item.note=editNote.value.trim();
+ item.cat=editSelectedCategory||item.cat;
+ (state.cycles||[]).forEach(c=>{
+  const archived=(c.expenses||[]).find(x=>String(x.id)===String(editingExpenseId));
+  if(archived){
+   archived.amount=item.amount;
+   archived.note=item.note;
+   archived.cat=item.cat;
+  }
+ });
+ save();
+ editModal.classList.remove('show');
+ render();
+};
+
+function syncBottomSpace(){
+ const panel=document.getElementById('expensePanel');
+ const app=document.querySelector('.app');
+ if(panel&&app) app.style.paddingBottom=(panel.offsetHeight+28)+'px';
+}
+window.addEventListener('resize',syncBottomSpace);
+if(window.ResizeObserver){
+ new ResizeObserver(syncBottomSpace).observe(document.getElementById('expensePanel'));
+}
+setTimeout(syncBottomSpace,0);
+
+settingsBtn.onclick=()=>{fill();modal.classList.add('show')};
+close.onclick=()=>modal.classList.remove('show');
+
+function fill(){
+ salary.value=state.salary;salaryDay.value=state.salaryDay;
+ renderC();renderCategorySettings();preview();
+ cycleStartText.textContent=new Date(state.cycleStart).toLocaleDateString('ar-SA-u-ca-gregory',{day:'numeric',month:'long',year:'numeric'});
+}
+function renderC(){
+ commitments.innerHTML=state.commitments.map((x,i)=>`<div class="commit">
+ <input value="${escapeHtml(x.name)}" oninput="state.commitments[${i}].name=this.value;preview()">
+ <input type="number" min="0" value="${n(x.amount)}" oninput="state.commitments[${i}].amount=this.value;preview()">
+ <button class="remove" onclick="removeC(${i})">×</button></div>`).join('')
+}
+function removeC(i){state.commitments.splice(i,1);renderC();preview()}window.removeC=removeC;
+addCommitment.onclick=()=>{state.commitments.push({id:'c'+Date.now(),name:'التزام جديد',amount:0});renderC();preview()};
+
+function renderCategorySettings(){
+ categorySettings.innerHTML=state.categories.map((x,i)=>`<div class="catsetting">
+ <input value="${escapeHtml(x.name)}" oninput="state.categories[${i}].name=this.value">
+ <input type="number" min="0" value="${n(x.budget)}" oninput="state.categories[${i}].budget=this.value;preview()">
+ <button class="remove" onclick="removeCategory(${i})">×</button></div>`).join('')
+}
+function removeCategory(i){
+ const cat=state.categories[i];
+ const count=state.expenses.filter(x=>x.cat===cat.id).length;
+ const msg=count?`هذا التصنيف فيه ${count} مصروف. حذفه سيحذف مصروفاته أيضًا. هل تريد المتابعة؟`:'هل تريد حذف هذا التصنيف؟';
+ if(!confirm(msg)) return;
+ state.expenses=state.expenses.filter(x=>x.cat!==cat.id);
+ state.categories.splice(i,1);
+ renderCategorySettings();preview()
+}
+window.removeCategory=removeCategory;
+addCategory.onclick=()=>{
+ state.categories.push({id:'cat_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:'تصنيف جديد',budget:0});
+ renderCategorySettings();preview()
+};
+
+['salary'].forEach(id=>document.getElementById(id).addEventListener('input',preview));
+function preview(){
+ const sal=n(salary.value),ct=state.commitments.reduce((s,x)=>s+n(x.amount),0),na=Math.max(0,sal-ct);
+ const r=Math.max(0,na-state.categories.reduce((s,x)=>s+n(x.budget),0));
+ commitTotal.textContent=m(ct);netAfter.textContent=m(na);reservePreview.textContent=m(r)
+}
+
+salaryReceivedBtn.onclick=()=>{
+ if(!confirm('هل استلمت الراتب وتريد إغلاق الدورة الحالية وبدء دورة جديدة؟'))return;
+ const end=new Date();
+ const currentItems=currentCycleExpenses();
+ const archived={
+  id:'cycle_'+Date.now(),
+  closed:true,
+  start:state.cycleStart||end.toISOString(),
+  end:end.toISOString(),
+  salary:n(state.salary),
+  commitmentsTotal:cTotal(),
+  netAfterCommitments:net(),
+  categories:state.categories.map(x=>({id:x.id,name:x.name,budget:n(x.budget)})),
+  expenses:currentItems.map(x=>({...x}))
+ };
+ state.cycles=state.cycles||[];
+ state.cycles.push(archived);
+ state.salary=n(salary.value)||state.salary;
+ state.salaryDay=Math.max(1,Math.min(31,n(salaryDay.value)||new Date().getDate()));
+ state.cycleStart=end.toISOString();
+ save();
+ modal.classList.remove('show');
+ render();
+ alert('تم إغلاق الدورة السابقة وحفظها، وبدأت دورة جديدة.');
+};
+
+saveSettings.onclick=()=>{
+ state.salary=n(salary.value);
+ state.salaryDay=Math.max(1,Math.min(31,n(salaryDay.value)||25));
+ state.commitments=state.commitments.map(x=>({id:x.id||'c'+Date.now(),name:(x.name||'التزام').trim(),amount:n(x.amount)}));
+ state.categories=state.categories.map(x=>({id:x.id||'cat_'+Date.now(),name:(x.name||'تصنيف').trim(),budget:n(x.budget)})).filter(x=>x.name);
+ save();modal.classList.remove('show');render()
+};
+
+
+const dailyModal=document.getElementById('dailyModal');
+const dataModal=document.getElementById('dataModal');
+
+function localDateKey(date=new Date()){
+ const y=date.getFullYear(),mth=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
+ return `${y}-${mth}-${d}`;
+}
+function expensesForDay(key){return state.expenses.filter(x=>(x.dayKey||localDateKey(new Date(x.date)))===key)}
+function dailyBudgetForDate(key){
+ const day=new Date(key+'T12:00:00');
+ const start=new Date(state.cycleStart||0);
+ if(day<new Date(start.getFullYear(),start.getMonth(),start.getDate())) return 0;
+ const d=Math.max(1,Math.min(31,n(state.salaryDay)||25));
+ let next=new Date(day.getFullYear(),day.getMonth(),d);
+ if(next<=day) next=new Date(day.getFullYear(),day.getMonth()+1,d);
+ const days=Math.max(1,Math.ceil((next-day)/86400000));
+ const spentBefore=state.expenses.filter(x=>{
+  const dt=new Date(x.date);
+  return dt>=start && localDateKey(dt)<key;
+ }).reduce((sum,x)=>sum+n(x.amount),0);
+ return Math.max(0,net()-spentBefore)/days;
+}
+function renderDailyReport(){
+ const key=dailyDate.value||localDateKey();
+ const items=[...expensesForDay(key)].sort((a,b)=>b.date.localeCompare(a.date));
+ const total=items.reduce((s,x)=>s+n(x.amount),0);
+ const budget=dailyBudgetForDate(key);
+ const left=budget-total;
+ const grouped=state.categories.map(cat=>({name:cat.name,amount:items.filter(x=>x.cat===cat.id).reduce((s,x)=>s+n(x.amount),0)})).filter(x=>x.amount>0).sort((a,b)=>b.amount-a.amount);
+ dailyContent.innerHTML=`
+  <div class="reportgrid">
+   <div class="reportcard"><span>ميزانية اليوم</span><b>${m(budget)} ريال</b></div>
+   <div class="reportcard"><span>إجمالي المصروف</span><b>${m(total)} ريال</b></div>
+   <div class="reportcard"><span>${left>=0?'المتبقي':'التجاوز'}</span><b>${m(Math.abs(left))} ريال</b></div>
+   <div class="reportcard"><span>عدد العمليات</span><b>${items.length.toLocaleString('ar-SA')}</b></div>
+  </div>
+  <h2 style="margin-top:22px">حسب التصنيف</h2>
+  <div class="reportlist">${grouped.length?grouped.map(x=>`<div class="reportrow"><b>${escapeHtml(x.name)}</b><span>${m(x.amount)} ريال</span></div>`).join(''):'<div class="empty">لا توجد مصروفات في هذا اليوم</div>'}</div>
+  <h2 style="margin-top:22px">عمليات اليوم</h2>
+  <div class="reportlist">${items.length?items.map(x=>`<div class="reportrow"><div><b>${m(x.amount)} ريال · ${escapeHtml(catName(x.cat))}</b><small style="display:block;color:var(--muted);margin-top:4px">${escapeHtml(x.note||'بدون ملاحظة')} · ${new Date(x.date).toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})}</small></div></div>`).join(''):'<div class="empty">لا توجد عمليات</div>'}</div>`;
+}
+dailyReportBtn.onclick=()=>{dailyDate.value=localDateKey();renderDailyReport();dailyModal.classList.add('show')};
+closeDaily.onclick=()=>dailyModal.classList.remove('show');
+dailyDate.onchange=renderDailyReport;
+todayReportBtn.onclick=()=>{dailyDate.value=localDateKey();renderDailyReport()};
+
+function dateRangeExpenses(from,to){
+ return state.expenses.filter(x=>{const k=localDateKey(new Date(x.date));return k>=from&&k<=to});
+}
+function buildShareData(){
+ const from=dataFrom.value,to=dataTo.value;
+ if(!from||!to||from>to){alert('اختر فترة صحيحة');return null}
+ const items=dateRangeExpenses(from,to);
+ const total=items.reduce((s,x)=>s+n(x.amount),0);
+ const dayCount=Math.max(1,Math.floor((new Date(to+'T12:00:00')-new Date(from+'T12:00:00'))/86400000)+1);
+ const daysWithSpend=new Set(items.map(x=>localDateKey(new Date(x.date))));
+ const grouped=state.categories.map(cat=>({name:cat.name,amount:items.filter(x=>x.cat===cat.id).reduce((s,x)=>s+n(x.amount),0)})).filter(x=>x.amount>0).sort((a,b)=>b.amount-a.amount);
+ const dailyOver=[...daysWithSpend].filter(k=>{
+   const t=expensesForDay(k).reduce((s,x)=>s+n(x.amount),0);return t>dailyBudgetForDate(k)
+ }).length;
+ const commitmentsTotal=cTotal();
+ const remaining=Math.max(0,net()-currentCycleExpenses().reduce((s,x)=>s+n(x.amount),0));
+ const text=[
+  `الفترة: ${new Date(from+'T12:00:00').toLocaleDateString('ar-SA-u-ca-gregory')} إلى ${new Date(to+'T12:00:00').toLocaleDateString('ar-SA-u-ca-gregory')}`,
+  `الراتب: ${m(state.salary)} ريال`,
+  `الالتزامات: ${m(commitmentsTotal)} ريال`,
+  `الصافي بعد الالتزامات: ${m(net())} ريال`,
+  `إجمالي المصروفات خلال الفترة: ${m(total)} ريال`,
+  `المتبقي في الدورة الحالية: ${m(remaining)} ريال`,
+  `متوسط الصرف اليومي خلال الأيام المطلوبة: ${m(total/dayCount)} ريال`,
+  `عدد الأيام المحتسبة في المتوسط: ${dayCount.toLocaleString('ar-SA')}`,
+  `عدد الأيام التي حدث فيها صرف: ${daysWithSpend.size.toLocaleString('ar-SA')}`,
+  `عدد الأيام التي تجاوزت ميزانيتها: ${dailyOver.toLocaleString('ar-SA')}`,
+  '', 'الصرف حسب التصنيف:',
+  ...(grouped.length?grouped.map(x=>`${x.name}: ${m(x.amount)} ريال`):['لا توجد مصروفات']),
+  '', 'ملاحظة: هذه البيانات صادرة يدويًا من تطبيق ميزانيتي.'
+ ].join('\n');
+ dataText.value=text;
+ return {app:'ميزانيتي اليومية',exportedAt:new Date().toISOString(),period:{from,to},financials:{salary:n(state.salary),commitmentsTotal,netAfterCommitments:net(),currentCycleRemaining:remaining,totalExpenses:total,averagePerElapsedDay:total/dayCount,elapsedDays:dayCount,daysWithSpending:daysWithSpend.size,daysOverBudget:dailyOver},categories:grouped,expenses:items.map(x=>({date:x.date,category:catName(x.cat),amount:n(x.amount),...(hideNotes.checked?{}:{note:x.note||''})}))};
+}
+dataBtn.onclick=()=>{const now=new Date();dataTo.value=localDateKey(now);dataFrom.value=localDateKey(new Date(state.cycleStart||now));buildShareData();dataModal.classList.add('show')};
+closeData.onclick=()=>dataModal.classList.remove('show');
+buildData.onclick=buildShareData;
+copyData.onclick=async()=>{if(!dataText.value)buildShareData();try{await navigator.clipboard.writeText(dataText.value);alert('تم نسخ الملخص')}catch(e){dataText.select();document.execCommand('copy');alert('تم نسخ الملخص')}};
+downloadData.onclick=()=>{const payload=buildShareData();if(!payload)return;const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`budget-data-${dataFrom.value}-to-${dataTo.value}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+
+let lastRenderedDay=localDateKey();
+function refreshIfDayChanged(){
+ const key=localDateKey();
+ if(key!==lastRenderedDay){lastRenderedDay=key;render()}
+}
+setInterval(refreshIfDayChanged,30000);
+window.addEventListener('focus',()=>{refreshIfDayChanged();render()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshIfDayChanged();render()}});
+render();setTimeout(syncBottomSpace,0);
+if(!state.salary && !localStorage.getItem('budget_welcome_seen')){
+ localStorage.setItem('budget_welcome_seen','1');
+ setTimeout(()=>alert('مرحبًا، افتح الإعدادات وأدخل بيانات ميزانيتك. كل مستخدم يحفظ بياناته على جهازه فقط.'),300);
+}
+</script>
+</body>
+</html>
